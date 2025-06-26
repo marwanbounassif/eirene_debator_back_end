@@ -30,32 +30,5 @@ def get_character_description(name):
     )
 
 
-def format_character_for_prompt(character: dict) -> str:
-    """
-    Format a character dictionary into a context string for prompting an LLM.
-
-    Expected keys:
-        - name
-        - debate_style
-        - personality_description
-        - extra_details (optional)
-
-    Returns a nicely formatted string.
-    """
-    name = character.get("name", "Unknown Character")
-    debate_style = character.get("debate_style", "neutral")
-    personality = character.get("personality_description", "")
-    extra = character.get("extra_details", "")
-
-    prompt_context = (
-        f"You are {name}.\n"
-        f"Debate style: {debate_style}.\n"
-        f"Personality: {personality}\n"
-    )
-
-    if extra:
-        prompt_context += f"Additional info: {extra}\n"
-
-    prompt_context += "Respond accordingly."
-
-    return prompt_context
+def create_character(char_description: str, prompt: str):
+    return
