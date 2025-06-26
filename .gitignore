@@ -20,3 +20,6 @@ data/uploads/
 # IDE/editor settings
 .vscode/
 .idea/
+
+# Notes
+snippets.txt
