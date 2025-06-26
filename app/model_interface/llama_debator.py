@@ -1,5 +1,6 @@
 from huggingface_hub import InferenceClient
 from app.model_interface.debator_interface import DebatorInterface
+import json
 
 
 class LlamaDebator(DebatorInterface):
@@ -56,3 +57,23 @@ class LlamaDebator(DebatorInterface):
         prompt_context += "Respond accordingly."
 
         return prompt_context
+
+    def create_character_from_description(self, user_input: dict) -> json:
+        client = InferenceClient(
+            provider="novita",
+            api_key=self._api_key,
+        )
+
+        completion = client.chat.completions.create(
+            model=self._model_name,
+            messages=[
+                {"role": "user", "content": prompt},
+                {"role": "system", "content": char_description},
+            ],
+        )
+
+        try:
+            return completion.choices[0].message.content
+        except Exception as e:
+            print("Unexpected response format:", e)
+            return "[Error parsing model output]"

@@ -10,3 +10,7 @@ class DebatorInterface(ABC):
     @abstractmethod
     def debate(self, char_description: str, prompt: str) -> str:
         pass
+
+    @abstractmethod
+    def create_character_from_description(user_input) -> str:
+        pass
