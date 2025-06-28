@@ -15,7 +15,7 @@ dist/
 .env
 
 # Uploaded files
-data/uploads/
+data/
 
 # IDE/editor settings
 .vscode/
@@ -23,3 +23,6 @@ data/uploads/
 
 # Notes
 snippets.txt
+
+#logs
+logs/

@@ -1,6 +1,33 @@
 from huggingface_hub import InferenceClient
 from app.model_interface.debator_interface import DebatorInterface
 import json
+import os
+from dotenv import load_dotenv
+from pathlib import Path
+import hashlib
+import logging
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+LOG_PATH = BASE_DIR / "logs" / "app.log"
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler(LOG_PATH),
+        logging.StreamHandler(),  # prints to console
+    ],
+)
+logger = logging.getLogger(__name__)
+
+load_dotenv()
+
+MODEL_CONFIG_PATH = Path(os.getenv("MODEL_CONFIG_PATH"))
+with MODEL_CONFIG_PATH.open() as f:
+    MODEL_CONFIG = json.load(f)
+
+MODEL_CONFIG = json.loads(MODEL_CONFIG_PATH.read_text())
+CHARACTER_DUMP_PATH = Path(os.getenv("CHARACTER_DUMP_PATH"))
 
 
 class LlamaDebator(DebatorInterface):
@@ -59,6 +86,11 @@ class LlamaDebator(DebatorInterface):
         return prompt_context
 
     def create_character_from_description(self, user_input: dict) -> json:
+        character_creation_prompt = MODEL_CONFIG[self._model_name][
+            "character_creation_prompt"
+        ]
+        character_creation_prompt = "\n".join(character_creation_prompt)
+
         client = InferenceClient(
             provider="novita",
             api_key=self._api_key,
@@ -67,13 +99,21 @@ class LlamaDebator(DebatorInterface):
         completion = client.chat.completions.create(
             model=self._model_name,
             messages=[
-                {"role": "user", "content": prompt},
-                {"role": "system", "content": char_description},
+                {"role": "user", "content": user_input},
+                {"role": "system", "content": character_creation_prompt},
             ],
         )
 
         try:
-            return completion.choices[0].message.content
+            response_str = completion.choices[0].message.content
+            cleaned = response_str.strip().lstrip("`json").strip("`")
+            character_data = json.loads(cleaned)
+            hash_input = json.dumps(character_data, sort_keys=True).encode()
+            hashed_id = hashlib.sha256(hash_input).hexdigest()[:12]
+            output_path = CHARACTER_DUMP_PATH / f"{hashed_id}.json"
+            with output_path.open("w") as f:
+                json.dump(character_data, f, indent=2)
+            return character_data
         except Exception as e:
             print("Unexpected response format:", e)
-            return "[Error parsing model output]"
+            return {"error": "Failed to parse or save character"}
