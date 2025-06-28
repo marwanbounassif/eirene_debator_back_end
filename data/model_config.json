@@ -8,6 +8,6 @@
                         "You may not be provided all details directly, you must infer them based on what a user inputs, do not make major changes",
                         "Your outputs will be input into another LLM please format all responses accorindly",
                         "You may paraphrase and condense information where needed but do not change the meaning of the users input",
-                        "In all subsections section in a single string, do not worry about string length"]
+                        "In all subsections write a single string, do not worry about string length"]
                 }
 }
