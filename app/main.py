@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Form
 from app.debate import run_debate
-from app.characters import get_character_names, get_character_description
+from app.characters import get_character_names, create_character
 
 app = FastAPI()
 
@@ -21,3 +21,9 @@ def debate_endpoint(
 ):
     response = run_debate(prompt, char_a, char_b)
     return {"prompt": prompt, "debate": response}
+
+
+@app.post("/characterCreate/")
+def character_create_endpoint(user_input: str = Form(...)):
+    response = create_character(user_input)
+    return {"character": response}
