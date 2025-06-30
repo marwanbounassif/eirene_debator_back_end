@@ -68,20 +68,22 @@ def _run_turn_based_debate(
 
     else:
         history = _run_debate(a_context, b_context, history)
-        _run_turn_based_debate(a_context, b_context, history, remaining_turns - 1)
+        return _run_turn_based_debate(
+            a_context, b_context, history, remaining_turns - 1
+        )
 
 
 def _end_debate(a_context, b_context, history: List[str]):
     closing_statement_prompt = DEBATE_CONFIG.get("closing_statement_prompt")
-    a_response = LLAMA_DEBATOR.debate(a_context, closing_statement_prompt, history)
-    b_response = LLAMA_DEBATOR.debate(b_context, closing_statement_prompt, history)
+    a_response = LLAMA_DEBATOR.debate(a_context, history + [closing_statement_prompt])
+    b_response = LLAMA_DEBATOR.debate(b_context, history + [closing_statement_prompt])
 
     return history + [a_response, b_response]
 
 
 def _run_debate(a_context, b_context, history: List[str]) -> str:
     a_response = LLAMA_DEBATOR.debate(a_context, history)
-    b_response = LLAMA_DEBATOR.debate(b_context, history.append(a_response))
+    b_response = LLAMA_DEBATOR.debate(b_context, history + [a_response])
 
     history = history + [a_response, b_response]
     return history

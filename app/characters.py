@@ -36,15 +36,15 @@ CHARACTERS_BASE = {
 
 def get_character_names():
     base_characters = list(CHARACTERS_BASE.keys())
-    custom_charaters = load_character_names_from_dump()
+    custom_charaters = list(load_characters_from_dump().keys())
 
     return base_characters + custom_charaters
 
 
 def get_character_description(name):
-    return CHARACTERS_BASE.get(
-        name, {"style": "unknown", "description": "No info found."}
-    )
+    characters = load_characters_from_dump()
+    all_characters = characters | CHARACTERS_BASE
+    return all_characters[name]
 
 
 def create_character(user_input: str):
@@ -54,14 +54,14 @@ def create_character(user_input: str):
     return character_json
 
 
-def load_character_names_from_dump():
-    characters = []
+def load_characters_from_dump():
+    characters = {}
 
     for file in CHARACTER_DUMP_PATH.glob("*.json"):
         try:
             with open(file, "r") as f:
                 character = json.load(f)
-                characters.append(character["name"])
+                characters[character["name"]] = character
         except Exception as e:
             print(f"Failed to load {file.name}: {e}")
 

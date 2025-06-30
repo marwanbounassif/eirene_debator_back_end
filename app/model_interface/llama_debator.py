@@ -48,8 +48,6 @@ class LlamaDebator(DebatorInterface):
         if isinstance(prompt, str):
             prompt = [prompt]
 
-        logger.info(prompt)
-
         prompt = "\n".join(prompt)
 
         completion = client.chat.completions.create(
@@ -99,9 +97,7 @@ class LlamaDebator(DebatorInterface):
         return prompt_context
 
     def create_character_from_description(self, user_input: dict) -> json:
-        character_creation_prompt = MODEL_CONFIG[self._model_name][
-            "character_creation_prompt"
-        ]
+        character_creation_prompt = DEBATE_CONFIG.get("character_creation_prompt")
         character_creation_prompt = "\n".join(character_creation_prompt)
 
         client = InferenceClient(
