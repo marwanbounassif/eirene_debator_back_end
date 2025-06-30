@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 import hashlib
 import logging
-from typing import List, Optional
+from typing import List
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -72,7 +72,7 @@ class LlamaDebator(DebatorInterface):
             - name
             - debate_style
             - personality_description
-            - extra_details (optional)
+            - extra_details
 
         Returns a nicely formatted string.
 
