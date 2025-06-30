@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Form
-from app.debate import run_debate
+from app.debate import start_turn_based_debate
 from app.characters import get_character_names, create_character
 
 app = FastAPI()
@@ -17,9 +17,12 @@ def list_characters():
 
 @app.post("/debate/")
 def debate_endpoint(
-    prompt: str = Form(...), char_a: str = Form(...), char_b: str = Form(...)
+    prompt: str = Form(...),
+    char_a: str = Form(...),
+    char_b: str = Form(...),
+    debate_rounds_count: int = Form(...),
 ):
-    response = run_debate(prompt, char_a, char_b)
+    response = start_turn_based_debate(prompt, char_a, char_b, debate_rounds_count)
     return {"prompt": prompt, "debate": response}
 
 

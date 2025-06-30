@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 from pathlib import Path
 import hashlib
 import logging
+from typing import List
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOG_PATH = BASE_DIR / "logs" / "app.log"
@@ -23,11 +25,13 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 MODEL_CONFIG_PATH = Path(os.getenv("MODEL_CONFIG_PATH"))
-with MODEL_CONFIG_PATH.open() as f:
-    MODEL_CONFIG = json.load(f)
-
 MODEL_CONFIG = json.loads(MODEL_CONFIG_PATH.read_text())
+
 CHARACTER_DUMP_PATH = Path(os.getenv("CHARACTER_DUMP_PATH"))
+
+
+DEBATE_CONFIG_PATH = Path(os.getenv("DEBATE_CONFIG_PATH"))
+DEBATE_CONFIG = json.loads(DEBATE_CONFIG_PATH.read_text())
 
 
 class LlamaDebator(DebatorInterface):
@@ -35,11 +39,16 @@ class LlamaDebator(DebatorInterface):
         self._model_name = model_name
         self._api_key = api_key
 
-    def debate(self, char_description: str, prompt: str):
+    def debate(self, char_description: str, prompt: List[str]):
         client = InferenceClient(
             provider="novita",
             api_key=self._api_key,
         )
+
+        if isinstance(prompt, str):
+            prompt = [prompt]
+
+        prompt = "\n".join(prompt)
 
         completion = client.chat.completions.create(
             model=self._model_name,
@@ -63,9 +72,11 @@ class LlamaDebator(DebatorInterface):
             - name
             - debate_style
             - personality_description
-            - extra_details (optional)
+            - extra_details
 
         Returns a nicely formatted string.
+
+        TODO: MAKE THIS CONFIGURABLE
         """
         name = character.get("name", "Unknown Character")
         debate_style = character.get("debate_style", "neutral")
@@ -81,14 +92,12 @@ class LlamaDebator(DebatorInterface):
         if extra:
             prompt_context += f"Additional info: {extra}\n"
 
-        prompt_context += "Respond accordingly."
+        prompt_context += DEBATE_CONFIG.get("context_response_prompt")
 
         return prompt_context
 
     def create_character_from_description(self, user_input: dict) -> json:
-        character_creation_prompt = MODEL_CONFIG[self._model_name][
-            "character_creation_prompt"
-        ]
+        character_creation_prompt = DEBATE_CONFIG.get("character_creation_prompt")
         character_creation_prompt = "\n".join(character_creation_prompt)
 
         client = InferenceClient(

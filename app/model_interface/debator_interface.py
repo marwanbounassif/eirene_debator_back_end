@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import List
 
 
 class DebatorInterface(ABC):
@@ -8,7 +9,7 @@ class DebatorInterface(ABC):
         pass
 
     @abstractmethod
-    def debate(self, char_description: str, prompt: str) -> str:
+    def debate(self, char_description: str, prompt: List[str]) -> str:
         pass
 
     @abstractmethod
