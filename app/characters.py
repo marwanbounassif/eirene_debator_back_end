@@ -44,7 +44,9 @@ def get_character_names():
 def get_character_description(name):
     characters = load_characters_from_dump()
     all_characters = characters | CHARACTERS_BASE
-    return all_characters[name]
+    return all_characters.get(
+        name, {"style": "unknown", "description": "No info found."}
+    )
 
 
 def create_character(user_input: str):
