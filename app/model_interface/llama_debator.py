@@ -115,6 +115,7 @@ class LlamaDebator(DebatorInterface):
 
         try:
             response_str = completion.choices[0].message.content
+
             cleaned = response_str.strip().lstrip("`json").strip("`")
             character_data = json.loads(cleaned)
             hash_input = json.dumps(character_data, sort_keys=True).encode()

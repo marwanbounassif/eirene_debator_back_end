@@ -44,9 +44,11 @@ def get_character_names():
 def get_character_description(name):
     characters = load_characters_from_dump()
     all_characters = characters | CHARACTERS_BASE
-    return all_characters.get(
-        name, {"style": "unknown", "description": "No info found."}
-    )
+
+    if name not in all_characters:
+        raise ValueError(f"Character '{name}' not found.")
+
+    return all_characters[name]
 
 
 def create_character(user_input: str):
