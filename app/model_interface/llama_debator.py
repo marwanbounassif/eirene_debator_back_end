@@ -115,8 +115,10 @@ class LlamaDebator(DebatorInterface):
 
         try:
             response_str = completion.choices[0].message.content
+
             cleaned = response_str.strip().lstrip("`json").strip("`")
             character_data = json.loads(cleaned)
+            character_data['name'] = character_data['name'].lower()
             hash_input = json.dumps(character_data, sort_keys=True).encode()
             hashed_id = hashlib.sha256(hash_input).hexdigest()[:12]
             output_path = CHARACTER_DUMP_PATH / f"{hashed_id}.json"

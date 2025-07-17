@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Form
 from app.debate import start_turn_based_debate
 from app.characters import get_character_names, create_character
+from app.string_processor import preprocess_input_string
 
 app = FastAPI()
 
@@ -28,5 +29,6 @@ def debate_endpoint(
 
 @app.post("/characterCreate/")
 def character_create_endpoint(user_input: str = Form(...)):
+    user_input = preprocess_input_string(user_input)
     response = create_character(user_input)
     return {"character": response}

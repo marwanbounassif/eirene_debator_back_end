@@ -3,6 +3,7 @@ from pathlib import Path
 import json
 from dotenv import load_dotenv
 from app.characters import get_character_description
+from app.string_processor import preprocess_input_string
 from app.model_interface.llama_debator import LlamaDebator
 from typing import List
 import logging
@@ -34,8 +35,8 @@ logger = logging.getLogger(__name__)
 def start_turn_based_debate(
     prompt: str, char_a: str, char_b: str, debate_rounds_count: int = None
 ) -> str:
-    a = get_character_description(char_a)
-    b = get_character_description(char_b)
+    a = get_character_description(preprocess_input_string(char_a, lower_case=True))
+    b = get_character_description(preprocess_input_string(char_b, lower_case=True))
 
     a_context = LlamaDebator.format_character_for_prompt(a)
     b_context = LlamaDebator.format_character_for_prompt(b)
