@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 import json
 from app.model_interface.llama_debator import LlamaDebator
+from app.string_processor import preprocess_input_string
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -42,6 +43,7 @@ def get_character_names():
 
 
 def get_character_description(name):
+    name = preprocess_input_string(name, lower_case=True)
     characters = load_characters_from_dump()
     all_characters = characters | CHARACTERS_BASE
 
