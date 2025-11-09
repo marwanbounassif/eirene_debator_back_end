@@ -13,7 +13,7 @@ Small FastAPI backend for running turn-based debates between LLM-powered charact
 1. Create a Python virtual environment and activate it:
 
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 ```
 
