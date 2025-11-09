@@ -1,0 +1,35 @@
+# Version control
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+.venv/
+venv/
+ENV/
+
+# Development
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Project specific
+app/logs/*
+!app/logs/.gitkeep
+characters/*
+!characters/.gitkeep
+
+# Test coverage
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+coverage.xml
+*.cover

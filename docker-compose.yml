@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - ./app/logs:/app/app/logs
+    environment:
+      - HF_API_KEY=${HF_API_KEY}
+      - MODEL_ID=${MODEL_ID}
+      - MODEL_CONFIG_PATH=/app/configs/model_config.json
+      - DEBATE_CONFIG_PATH=/app/configs/debate_config.json
+      - CHARACTER_DUMP_PATH=/app/characters
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Uncomment to add Redis for caching (future enhancement)
+  # redis:
+  #   image: redis:7-alpine
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+
+# volumes:
+#   redis_data:

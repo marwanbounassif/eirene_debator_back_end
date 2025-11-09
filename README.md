@@ -9,35 +9,48 @@ Small FastAPI backend for running turn-based debates between LLM-powered charact
 - Model adapter interface in `app/model_interface/` and an example adapter `llama_debator.py` using the Hugging Face Inference client.
 - Configs in `configs/` (model + debate prompts).
 
-## Quickstart (local)
-1. Create a Python virtual environment and activate it:
+## Running with Docker (recommended)
 
+1. Copy the example env file and fill values:
+```bash
+cp .env.example .env
+# Edit .env and set HF_API_KEY and MODEL_ID
+```
+
+2. Build and start the containers:
+```bash
+docker compose up --build
+```
+
+3. Open the API docs at: http://localhost:8000/docs
+
+The app code will hot-reload when you make changes.
+
+## Running locally (alternative)
+
+1. Create a Python virtual environment and activate it:
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
 2. Install dependencies:
-
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Copy the example env file and fill values:
-
+3. Copy and configure the env file:
 ```bash
 cp .env.example .env
 # Edit .env and set HF_API_KEY, MODEL_ID and paths
 ```
 
-4. Ensure the `CHARACTER_DUMP_PATH` directory exists (as set in your `.env`):
-
+4. Ensure required directories exist:
 ```bash
-mkdir -p ./characters
+mkdir -p ./characters ./app/logs
 ```
 
-5. Run the app locally with uvicorn:
-
+5. Run the app with uvicorn:
 ```bash
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
