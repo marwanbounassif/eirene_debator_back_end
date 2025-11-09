@@ -24,7 +24,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 FROM builder as dev
 
 # Create required directories
-RUN mkdir -p /app/app/logs /app/characters
+RUN mkdir -p /app/logs /app/characters
 
 # Copy application code (will be mounted in docker-compose)
 COPY . .
