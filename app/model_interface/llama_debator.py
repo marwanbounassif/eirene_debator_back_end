@@ -5,22 +5,12 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 import hashlib
-import logging
 from typing import List
+from app.utils.logging import setup_logging
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-LOG_PATH = BASE_DIR / "logs" / "app.log"
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[
-        logging.FileHandler(LOG_PATH),
-        logging.StreamHandler(),  # prints to console
-    ],
-)
-logger = logging.getLogger(__name__)
+# Setup logging
+logger = setup_logging(__name__)
 
 load_dotenv()
 
@@ -61,7 +51,7 @@ class LlamaDebator(DebatorInterface):
         try:
             return completion.choices[0].message.content
         except Exception as e:
-            print("Unexpected response format:", e)
+            logger.error("Unexpected response format: %s", e)
             return "[Error parsing model output]"
 
     def format_character_for_prompt(character: dict) -> str:
@@ -124,5 +114,5 @@ class LlamaDebator(DebatorInterface):
                 json.dump(character_data, f, indent=2)
             return character_data
         except Exception as e:
-            print("Unexpected response format:", e)
+            logger.error("Failed to create character: %s", e)
             return {"error": "Failed to parse or save character"}

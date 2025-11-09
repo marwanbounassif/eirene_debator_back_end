@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from app.characters import get_character_description
 from app.model_interface.llama_debator import LlamaDebator
 from typing import List
-import logging
+from app.utils.logging import setup_logging
 
 
 load_dotenv()
@@ -18,17 +18,8 @@ DEBATE_CONFIG_PATH = Path(os.getenv("DEBATE_CONFIG_PATH"))
 DEBATE_CONFIG = json.loads(DEBATE_CONFIG_PATH.read_text())
 
 
-LOG_PATH = Path("app" + "/" + "logs" + "/" + "app.log")
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[
-        logging.FileHandler(LOG_PATH),
-        logging.StreamHandler(),  # prints to console
-    ],
-)
-logger = logging.getLogger(__name__)
+# Setup logging
+logger = setup_logging(__name__)
 
 
 def start_turn_based_debate(
