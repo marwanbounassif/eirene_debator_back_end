@@ -19,6 +19,18 @@ services:
       - LOG_PATH=/app/logs/app.log
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
+  jupyter:
+    build:
+      context: .
+      dockerfile: Dockerfile.jupyter
+    ports:
+      - "8888:8888"
+    volumes:
+      - .:/home/jovyan/work
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+    command: start-notebook.sh --NotebookApp.token=''
+
 volumes:
   character_data:  # Named volume for character data persistence
   log_data:       # Named volume for logs persistence
