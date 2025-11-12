@@ -8,14 +8,15 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
-      - character_data:/app/characters
+      - character_data:/characters
       - log_data:/app/logs
     environment:
       - HF_API_KEY=${HF_API_KEY}
       - MODEL_ID=${MODEL_ID}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
       - MODEL_CONFIG_PATH=/app/configs/model_config.json
       - DEBATE_CONFIG_PATH=/app/configs/debate_config.json
-      - CHARACTER_DUMP_PATH=/app/characters
+      - CHARACTER_DUMP_PATH=/characters
       - LOG_PATH=/app/logs/app.log
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
@@ -27,6 +28,10 @@ services:
       - "8888:8888"
     volumes:
       - .:/home/jovyan/work
+      - character_data:/home/jovyan/work/characters
+      - log_data:/home/jovyan/work/app/logs/ 
+    env_file:
+      - .env
     environment:
       - JUPYTER_ENABLE_LAB=yes
     command: start-notebook.sh --NotebookApp.token=''

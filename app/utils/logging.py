@@ -22,7 +22,7 @@ def setup_logging(name: str = None) -> logging.Logger:
     # Configure logging
     logging.basicConfig(
         level=os.getenv("LOG_LEVEL", "INFO"),
-        format="%(asctime)s [%(name)s] [%(levelname)s] %(message)s",
+        format="%(asctime)s [%(name)s] [%(levelname)s] [%(module)s:%(funcName)s] %(message)s",
         handlers=[
             logging.FileHandler(log_path),
             logging.StreamHandler(),  # prints to console
