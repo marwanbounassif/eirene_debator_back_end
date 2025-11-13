@@ -58,11 +58,46 @@ class LangChainDebator(DebatorInterface):
     def format_character_for_prompt(self, character: dict) -> str:
         return "Not implemented yet."
     
-    def intialize_agent(self, user_input: str):
-        system_prompt = self.create_character_from_description(user_input)
-        agent = create_agent(
-            model=self._model_name,
-            tools=[],
-            system_prompt= system_prompt
-        )
-        return agent
+    def intialize_agent(self, character_id: str):
+        """Initialize an agent from a saved character file.
+
+        This function will:
+        - verify the character file exists
+        - parse the JSON safely
+        - extract the system prompt for the given character_id (with a fallback)
+        - log useful errors and return None on failure
+        """
+        logger.info("Initializing agent for character ID: %s", character_id)
+
+        try:
+            file_path = CHARACTER_DUMP_PATH.joinpath(f"{character_id}.json")
+
+            if not file_path.exists():
+                logger.error("Character file not found: %s", file_path)
+                return None
+
+            # Read and parse JSON
+            with file_path.open("r") as f:
+                data = json.load(f)
+
+            # If file is a dict keyed by id, fetch by character_id
+            if isinstance(data, dict) and character_id in data:
+                system_prompt = data[character_id]
+            else:   
+                system_prompt = data
+                
+            agent = create_agent(
+                model=self._model_name,
+                tools=[],
+                system_prompt=system_prompt,
+            )
+
+            logger.info("Agent initialized for character ID: %s", character_id)
+            return agent
+
+        except json.JSONDecodeError as e:
+            logger.error("Failed to parse JSON from %s: %s", file_path, e)
+            return None
+        except Exception:
+            logger.exception("Unexpected error initializing agent for %s", character_id)
+            return None
