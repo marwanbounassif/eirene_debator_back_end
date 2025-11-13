@@ -8,7 +8,7 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
-      - character_data:/characters
+      - character_data:/app/characters  # Fixed: aligned with CHARACTER_DUMP_PATH env var
       - log_data:/app/logs
     environment:
       - HF_API_KEY=${HF_API_KEY}
@@ -16,7 +16,7 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - MODEL_CONFIG_PATH=/app/configs/model_config.json
       - DEBATE_CONFIG_PATH=/app/configs/debate_config.json
-      - CHARACTER_DUMP_PATH=/characters
+      - CHARACTER_DUMP_PATH=/app/characters
       - LOG_PATH=/app/logs/app.log
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
@@ -28,14 +28,17 @@ services:
       - "8888:8888"
     volumes:
       - .:/home/jovyan/work
-      - character_data:/home/jovyan/work/characters
-      - log_data:/home/jovyan/work/app/logs/ 
+      - character_data:/home/jovyan/work/app/characters
+      - log_data:/home/jovyan/work/app/logs
     env_file:
       - .env
     environment:
       - JUPYTER_ENABLE_LAB=yes
-    command: start-notebook.sh --NotebookApp.token=''
+      - GRANT_SUDO=yes
+    user: root  # Run as root to manage permissions on shared volumes
+    # Fix permissions on startup to ensure both containers can read/write shared volumes
+    command: bash -c "chmod -R 777 /home/jovyan/work/app/logs /home/jovyan/work/app/characters && start-notebook.sh --NotebookApp.token='' --allow-root"
 
 volumes:
   character_data:  # Named volume for character data persistence
-  log_data:       # Named volume for logs persistence
+  log_data:        # Named volume for logs persistence

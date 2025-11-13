@@ -19,7 +19,6 @@ MODEL_CONFIG = json.loads(MODEL_CONFIG_PATH.read_text())
 
 CHARACTER_DUMP_PATH = Path(os.getenv("CHARACTER_DUMP_PATH"))
 
-
 DEBATE_CONFIG_PATH = Path(os.getenv("DEBATE_CONFIG_PATH"))
 DEBATE_CONFIG = json.loads(DEBATE_CONFIG_PATH.read_text())
 

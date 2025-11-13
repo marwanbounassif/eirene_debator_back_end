@@ -25,4 +25,4 @@ data/
 snippets.txt
 
 #logs
-logs/
+app/logs/
