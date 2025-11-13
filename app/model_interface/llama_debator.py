@@ -19,7 +19,6 @@ MODEL_CONFIG = json.loads(MODEL_CONFIG_PATH.read_text())
 
 CHARACTER_DUMP_PATH = Path(os.getenv("CHARACTER_DUMP_PATH"))
 
-
 DEBATE_CONFIG_PATH = Path(os.getenv("DEBATE_CONFIG_PATH"))
 DEBATE_CONFIG = json.loads(DEBATE_CONFIG_PATH.read_text())
 
@@ -87,7 +86,7 @@ class LlamaDebator(DebatorInterface):
         return prompt_context
 
     def create_character_from_description(self, user_input: dict) -> json:
-        character_creation_prompt = DEBATE_CONFIG.get("character_creation_prompt")
+        character_creation_prompt = DEBATE_CONFIG.get("interpreted_character_creation_prompt")
         character_creation_prompt = "\n".join(character_creation_prompt)
 
         client = InferenceClient(
@@ -105,14 +104,28 @@ class LlamaDebator(DebatorInterface):
 
         try:
             response_str = completion.choices[0].message.content
+            logger.info("Raw response from model: %s", response_str)
+
+            # Clean up the response string
             cleaned = response_str.strip().lstrip("`json").strip("`")
+
+            # Attempt to parse the JSON
             character_data = json.loads(cleaned)
+
+            # Generate a unique hash ID for the character
             hash_input = json.dumps(character_data, sort_keys=True).encode()
             hashed_id = hashlib.sha256(hash_input).hexdigest()[:12]
+
+            # Save the character data to a file
             output_path = CHARACTER_DUMP_PATH / f"{hashed_id}.json"
             with output_path.open("w") as f:
                 json.dump(character_data, f, indent=2)
+
             return character_data
+        except json.JSONDecodeError as e:
+            logger.error("JSON decoding error: %s", e)
+            logger.info("Failed response content: %s", response_str)
+            return {"error": f"Failed to parse character JSON, with response: {response_str}"}
         except Exception as e:
-            logger.error("Failed to create character: %s", e)
-            return {"error": "Failed to parse or save character"}
+            logger.error("Unexpected error: %s", e)
+            return {"error": "An unexpected error occurred while creating the character"}

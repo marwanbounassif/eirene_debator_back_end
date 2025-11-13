@@ -1,0 +1,16 @@
+FROM jupyter/base-notebook:latest
+
+# Switch to root to install packages and set up directories
+USER root
+
+# Install Python dependencies
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install -r /tmp/requirements.txt
+
+# Create shared directories with open permissions
+# 777 permissions allow both containers (API and Jupyter) to read/write
+RUN mkdir -p /home/jovyan/work/app/logs /home/jovyan/work/app/characters && \
+    chmod -R 777 /home/jovyan/work/app/logs /home/jovyan/work/app/characters
+
+# Switch back to jovyan user for security (Jupyter best practice)
+USER jovyan

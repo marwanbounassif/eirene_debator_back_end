@@ -1,4 +1,9 @@
 {
-    "meta-llama/Meta-Llama-3-8B-Instruct" : {"name": "meta-llama/Meta-Llama-3-8B-Instruct"
-                }
+    "meta-llama/Meta-Llama-3-8B-Instruct": {
+        "name": "meta-llama/Meta-Llama-3-8B-Instruct"
+    },
+    "agent_configs": {
+        "temperature": 0,
+        "max_tokens": 500
+    }
 }

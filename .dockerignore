@@ -22,8 +22,8 @@ ENV/
 # Project specific
 app/logs/*
 !app/logs/.gitkeep
-characters/*
-!characters/.gitkeep
+app/characters/*
+!app/characters/.gitkeep
 
 # Test coverage
 htmlcov/
