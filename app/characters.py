@@ -63,7 +63,7 @@ def load_characters_from_dump():
         try:
             with open(file, "r") as f:
                 character = json.load(f)
-                characters[character["name"]] = character
+                characters[character["character_id"]] = character
         except Exception as e:
             print(f"Failed to load {file.name}: {e}")
 
